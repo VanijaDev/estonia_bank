@@ -239,7 +239,7 @@ contract Bank is Ownable {
     require(msg.value == transferFee, "wrong fee provided");
     require(_amount > 0, "wrong amount");
     require(_to != address(0), "wrong to");
-    require(ownerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
+    require(getOwnerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
 
     Wallet(_address).transferFunds(_amount, _to);
   }
