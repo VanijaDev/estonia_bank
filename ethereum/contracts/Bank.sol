@@ -64,6 +64,47 @@ contract Bank is Ownable {
     return address(_address).balance;
   }
 
+  /**
+   * @dev Gets createdAt.
+   * @param _address Wallet address.
+   * @return createdAt timestamp.
+   */
+  function getCreatedAtForWallet(address _address) public view onlyOwner returns(uint256) {
+    return Wallet(_address).getCreatedAt();
+  }
+
+  /**
+   * @dev Gets lastDepositAt.
+   * @param _address Wallet address.
+   * @return lastDepositAt timestamp.
+   */
+  function getLastDepositAtForWallet(address _address) public view onlyOwner returns(uint256) {
+    return Wallet(_address).getLastDepositAt();
+  }
+
+  /**
+   * @dev Gets lastWithdrawalAt.
+   * @param _address Wallet address.
+   * @return lastWithdrawalAt timestamp.
+   */
+  function getLastWithdrawalAtForWallet(address _address) public view onlyOwner returns(uint256) {
+    return Wallet(_address).getLastWithdrawalAt();
+  }
+
+  /**
+   * @dev Gets lastTransferAt.
+   * @param _address Wallet address.
+   * @return lastTransferAt timestamp.
+   */
+  function getLastTransferAtForWallet(address _address) public view onlyOwner returns(uint256) {
+    return Wallet(_address).getLastTransferAt();
+  }
+
+  /**
+   * @dev Gets owner address for wallet.
+   * @param _address Wallet address.
+   * @return Owner address.
+   */
   function ownerAddressForWalletAddress(address _address) public view onlyOwner returns (address) {
     return Wallet(_address).getWalletOwner();
   }
