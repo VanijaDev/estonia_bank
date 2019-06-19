@@ -15,8 +15,8 @@ import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 contract Bank is Ownable {
   using SafeMath for uint256;
 
-  bool public walletCreationAllowed;  //  allows/disallows to create new wallets
-  bool public walletManagementAllowed;  //  allows/disallows to modify in any way wallet by user
+  bool public walletCreationAllowed = true;  //  allows/disallows to create new wallets
+  bool public walletManagementAllowed = true;  //  allows/disallows to modify in any way wallet by user
 
   uint256 public transferFee = 0.01 ether;
   uint256 public minDeposit = 0.1 ether;
@@ -182,14 +182,15 @@ contract Bank is Ownable {
    */
   /**
    * @dev Creates new wallet.
+   * @param _walletOwner Wallet owner address.
    */
-  function createWallet() public payable onlyWhileWalletCreationAllowed {
+  function createWallet(address payable _walletOwner) public payable onlyOwner onlyWhileWalletCreationAllowed {
     require(msg.value >= minDeposit, "wrong value");
-    require(walletAddressesForOwnerAddress[msg.sender].length <= walletLimitForAddress, "limit reached");
+    require(walletAddressesForOwnerAddress[_walletOwner].length < walletLimitForAddress, "limit reached");
 
-    Wallet wallet = (new Wallet).value(msg.value)(address(msg.sender));
+    Wallet wallet = (new Wallet).value(msg.value)(_walletOwner);
 
-    walletAddressesForOwnerAddress[msg.sender].push(address(wallet));
+    walletAddressesForOwnerAddress[_walletOwner].push(address(wallet));
 
     walletsAmount = walletsAmount.add(1);
     depositsTotal = depositsTotal.add(msg.value);
