@@ -219,13 +219,14 @@ contract Bank is Ownable {
   /**
    * @dev Withdraws wallet.
    * @param _address Wallet address.
+   * @param _amount Amount to withdraw.
    */
-  function withdrawWallet(address _address) public payable onlyWhileWalletManagementAllowed {
-    require(ownerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
+  function withdrawWallet(address _address, uint256 _amount) public onlyWhileWalletManagementAllowed {
+    require(getOwnerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
 
-    Wallet(_address).withdraw(msg.value);
+    Wallet(_address).withdraw(_amount);
 
-    depositsTotal = depositsTotal.sub(msg.value);
+    depositsTotal = depositsTotal.sub(_amount);
   }
   
   /**
