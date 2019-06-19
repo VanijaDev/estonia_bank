@@ -29,9 +29,16 @@ contract Wallet is Ownable {
   }
 
   /**
+   * @dev Gets Wallet info
+   * @return Info params
+   */
+  function getInfo() public view onlyOwner returns(address, uint256, uint256, uint256, uint256) {
+    return (walletOwner, createdAt, lastDepositAt, lastWithdrawalAt, lastTransferAt);
+  }
+
+  /**
    * @dev Gets balance of current wallet.
    * @return Balance.
-   * @notice No reason in onlyOwner - visible on Blockchain.
    */
   function getBalance() public view returns(uint256) {
     return address(this).balance;
@@ -81,8 +88,6 @@ contract Wallet is Ownable {
    * @dev Deposits funds to wallet.
    */
   function deposit() public payable onlyOwner {
-    require(msg.value > 0, "no deposit provided");
-
     lastDepositAt = now;
     emit WalletDepositted(msg.value, now);
   }

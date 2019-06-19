@@ -45,6 +45,14 @@ contract Bank is Ownable {
   /**
    * BANK MANAGEMENT
    */
+   
+   /**
+    * @dev Gets balance.
+    * @return Balance.
+    */
+   function getBalance() public view onlyOwner returns(uint256) {
+       return address(this).balance;
+   }
 
    /**
    * @dev Gets total deposits.
@@ -54,14 +62,13 @@ contract Bank is Ownable {
      return depositsTotal;
    }
 
-  /**
-   * @dev Gets wallet balance.
+   /**
+   * @dev Gets Wallet info
    * @param _address Wallet address.
-   * @return Wallet balance.
+   * @return Info params
    */
-  function walletBalance(address _address) public view onlyOwner returns(uint256) {
-    require(ownerAddressForWalletAddress(_address) != address(0), "no wallet");
-    return address(_address).balance;
+  function getWalletInfo(address _address) public view onlyOwner returns(address, uint256, uint256, uint256, uint256) {
+    return Wallet(_address).getInfo();
   }
 
   /**
@@ -106,7 +113,7 @@ contract Bank is Ownable {
    * @return Owner address.
    */
   function ownerAddressForWalletAddress(address _address) public view onlyOwner returns (address) {
-    return Wallet(_address).getWalletOwner();
+    return getOwnerAddressForWalletAddress(_address);
   }
 
   /**
@@ -202,9 +209,9 @@ contract Bank is Ownable {
    */
   function depositWallet(address _address) public payable onlyWhileWalletManagementAllowed {
     require(msg.value >= minDeposit, "wrong deposit value");
-    require(ownerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
+    require(getOwnerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
 
-    Wallet(_address).deposit.value(msg.value);
+    Wallet(_address).deposit.value(msg.value)();
 
     depositsTotal = depositsTotal.add(msg.value);
   }
@@ -234,5 +241,18 @@ contract Bank is Ownable {
     require(ownerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
 
     Wallet(_address).transferFunds(_amount, _to);
+  }
+
+  /**
+   * PRIVATE
+   */
+
+   /**
+   * @dev Gets owner address for wallet.
+   * @param _address Wallet address.
+   * @return Owner address.
+   */
+  function getOwnerAddressForWalletAddress(address _address) private view returns (address) {
+    return Wallet(_address).getWalletOwner();
   }
 }
