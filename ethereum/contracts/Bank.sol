@@ -130,6 +130,13 @@ contract Bank is Ownable {
   }
 
   /**
+   * @dev Withdraws bank fees
+   */
+  function withdrawBankFees() public onlyOwner {
+    msg.sender.transfer(address(this).balance);
+  }
+
+  /**
    * WALLET MANAGEMENT
    */
   /**
@@ -178,7 +185,8 @@ contract Bank is Ownable {
    * @param _amount Amount to transfer.
    * @param _to Receiver address.
    */
-  function transferFunds(address _address, uint256 _amount, address payable _to) public onlyWhileWalletManagementAllowed {
+  function transferFunds(address _address, uint256 _amount, address payable _to) public payable onlyWhileWalletManagementAllowed {
+    require(msg.value == transferFee, "wrong fee provided");
     require(_amount > 0, "wrong amount");
     require(_to != address(0), "wrong to");
     require(ownerAddressForWalletAddress(_address) == msg.sender, "not wallet owner");
